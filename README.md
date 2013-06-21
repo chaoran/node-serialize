@@ -1,7 +1,7 @@
-node-serialize
+serialize
 ==============
 
-A simple node library to serialize execution of asynchronous functions.
+A simple node utility to serialize execution of asynchronous functions.
 
 # What does it do?
 
