@@ -7,7 +7,7 @@ A simple node utility to serialize execution of asynchronous functions.
 
 Nodejs is an non-blocking I/O platform, which means all I/O operations are asynchronous. Asynchrny is great, except that it makes your code looks horrible because of all the callbacks. If you execute an I/O operation synchronously, which gives you good-looking, easy-to-read code, it will block the thread and makes your server not responsive.
 
-Here's node-serailize to the rescue! node-serialize will convert your asynchronous functions into their serailized versions, so that they are executed one after another, without explicitly use callback functions. Please note that node-serialize does not execute the function synchronously (block the thread), it just serialize the execution of asynchronous functions. It makes the code looks synchronous, but it is actually ascynhronous underneath.
+Here's node-serailize to the rescue! node-serialize will convert your asynchronous functions into their serailized versions, so that they are executed one after another, without explicitly use callback functions. Please note that node-serialize does __not__ execute the function synchronously (block the thread), it just serialize the execution of asynchronous functions. It makes the code looks synchronous, but it is actually ascynhronous underneath.
 
 # How to use it?
 
@@ -46,11 +46,12 @@ To serialize a function to a queue other than the default queue, give a queue na
 conn.query = serialize(conn.query, "db");
 ```
 
-## Is any function `serializable`?
+## Is any function *serializable*?
 
 Current version of `serialize` can only serialize a function that satisfies the following conditions:
+
 1. It accepts a callback function, and invokes the callback when it is done;
 2. If the callback function is optional, the second to last argument cannot be a 'Function' type;
 3. If an error occurs, it passed the error as the first argument to the callback, and the error must be an instance of `Error`.
 
-Note: Future version of `serialize` will be able `serialize` a function that emits an `end` or `error` event, instead of using a callback.
+Note: Future version of `serialize` will be able to serialize a function that emits `end` and `error` events.
