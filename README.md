@@ -5,7 +5,7 @@ A simple node utility to serialize execution of asynchronous functions.
 
 ## What does it do?
 
-Asynchrny in nodejs is great, except that it makes your code looks horrible because of all the callbacks. If you use synchronous functions, which give you good-looking, easy-to-read code, they will block the thread and make your server not responsive.
+Asynchrony in nodejs is great, except that it makes your code looks horrible because of all the callbacks. If you use synchronous functions, which give you good-looking, easy-to-read code, they will block the thread and make your server not responsive.
 
 Here's `serailize` to the rescue! `serialize` converts your asynchronous functions into serialized versions. Serialized functions are executed one after another, without explicitly chaining them with callback functions. `serialize` does __NOT__ execute the function synchronously (block the thread), it just serialize the execution of asynchronous functions. So that it makes the code looks synchronous, but it is actually ascynhronous underneath.
 
@@ -54,7 +54,7 @@ Current version of `serialize` can only serialize a function that satisfies the 
 2. If the callback function is optional, the second to last argument cannot be a 'Function' type;
 3. If an error occurs, it passed the error as the first argument to the callback, and the error must be an instance of `Error`.
 
-Note: Future version of `serialize` will be able to serialize a function that emits `end` and `error` events.
+Note: Future version of `serialize` may be able to serialize a function that emits `end` and `error` events.
 
 ## License - MIT
 
