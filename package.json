@@ -1,0 +1,26 @@
+{
+  "name": "serialize",
+  "version": "0.1.0",
+  "description": "A simple node utility to serialize execution of asynchronous functions",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chaoran/node-serialize.git"
+  },
+  "keywords": [
+    "serialize",
+    "asynchronous",
+    "flow",
+    "control"
+  ],
+  "author": "Chaoran Yang (chaoran@rice.edu)",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "gitHead": "033ccd446c5285e524a1be83d62e552d65bbf38b",
+  "bugs": {
+    "url": "https://github.com/chaoran/node-serialize/issues"
+  }
+}
