@@ -1,4 +1,4 @@
-serialize
+Serialize
 ==============
 
 A simple node utility to serialize execution of asynchronous functions.
