@@ -3,28 +3,28 @@ Serialize
 
 A simple node utility to serialize execution of asynchronous functions.
 
-# What does it do?
+## What does it do?
 
-Nodejs is an non-blocking I/O platform, which means all I/O operations are asynchronous. Asynchrny is great, except that it makes your code looks horrible because of all the callbacks. If you execute an I/O operation synchronously, which gives you good-looking, easy-to-read code, it will block the thread and makes your server not responsive.
+Asynchrny in nodejs is great, except that it makes your code looks horrible because of all the callbacks. If you use synchronous functions, which give you good-looking, easy-to-read code, they will block the thread and make your server not responsive.
 
-Here's node-serailize to the rescue! node-serialize will convert your asynchronous functions into their serailized versions, so that they are executed one after another, without explicitly use callback functions. Please note that node-serialize does __not__ execute the function synchronously (block the thread), it just serialize the execution of asynchronous functions. It makes the code looks synchronous, but it is actually ascynhronous underneath.
+Here's `serailize` to the rescue! `serialize` converts your asynchronous functions into serialized versions. Serialized functions are executed one after another, without explicitly chaining them with callback functions. `serialize` does __NOT__ execute the function synchronously (block the thread), it just serialize the execution of asynchronous functions. So that it makes the code looks synchronous, but it is actually ascynhronous underneath.
 
-# How to use it?
+## How to use it?
 
-To create a serialized version of an asynchronous function, all you need to do is call `serialize` with it. For example, if you want to make a serialized version of `fs.writeFile` and `fs.mkdir`, you do:
+To create a serialized version of an asynchronous function, call `serialize` with it. For example, if you want to make serialized versions of `fs.writeFile` and `fs.mkdir`, you do:
 ```javascript
 var serialize = require('serialize');
 
 fs.mkdir = serialize(fs.mkdir);
 fs.writeFile = serialize(fs.writeFile);
 ```
-Then, you can use `fs.mkdir` and `fs.writeFile` like they are synchronous:
+Then, you can use `fs.mkdir` and `fs.writeFile` like they are synchronous functions:
 ```javascript
 fs.mkdir('new');
 fs.mkdir('new/folder');
 fs.writeFile('new/folder/hello.txt', "hello world", callback);
 ```
-These function will be executed one after another, but they will not block the thread like their synchronous versions. `callback` will be invoked after all three calls complete.
+These function will be executed one after another, but they will not block the thread as their synchronous versions do. The `callback` will be invoked after the last call completes.
 
 If you want to restore `fs.writeFile` and `fs.mkdir` to their original version, just do:
 ```javascript
@@ -32,21 +32,21 @@ fs.mkdir = fs.mkdir.free();
 fs.writeFile = fs.writeFile.free();
 ```
 
-## What if an error happened? 
+### What if an error happens? 
 
-If an error happens, it will be passed to the corresponding callback function, and the execution of all serialized calls after it will be aborted. If an error happens in a function call that does not have a callback, the error will be passed down to the first call that has a callback function. 
+If an error happens, the error will be passed to the corresponding callback function, and the execution of all serialized calls after it will be aborted. If an error happens in a function call that does not have a callback, the error will be passed down to the first call that has a callback function. 
 For example, if the `fs.mkdir('new')` call in the above code throws an error, because there's no callback attached to that call, the error will be passed down to the callback of `fs.writeFile(...)`. And, of course, `fs.mkdir('new/folder')` and `fs.writeFile(...)` won't be executed because an error occurred before them.
 
-## What's more to it?
+### What's more to it?
 
-If you want to serialize calls to file system, and serialize calls to database, but allow calls to file system and calls to database to happen concurrently, how to achieve this? 
-Sure! You can serialize different functions into different queues. Functions belong to the same queue will be executed in serial, but functions between different queue can run concurrently. 
+If you want to serialize calls to file system, and serialize calls to database, but allow calls to file system and calls to database to happen concurrently, how to do it? 
+You can serialize different functions into different queues. Functions belong to the same queue will be executed in serial, but functions between different queues can run concurrently. 
 To serialize a function to a queue other than the default queue, give a queue name as the second argument of `serialize`:
 ```javascript
 conn.query = serialize(conn.query, "db");
 ```
 
-## Is any function *serializable*?
+### Is any function *serializable*?
 
 Current version of `serialize` can only serialize a function that satisfies the following conditions:
 
