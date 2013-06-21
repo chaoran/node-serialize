@@ -24,7 +24,7 @@ fs.mkdir('new');
 fs.mkdir('new/folder');
 fs.writeFile('new/folder/hello.txt', "hello world", callback);
 ```
-These function will be executed one after another, but they will not block the thread like their synchronous versions.
+These function will be executed one after another, but they will not block the thread like their synchronous versions. `callback` will be invoked after all three calls complete.
 
 If you want to restore `fs.writeFile` and `fs.mkdir` to their original version, just do:
 ```javascript
@@ -32,3 +32,25 @@ fs.mkdir = fs.mkdir.free();
 fs.writeFile = fs.writeFile.free();
 ```
 
+## What if an error happened? 
+
+If an error happens, it will be passed to the corresponding callback function, and the execution of all serialized calls after it will be aborted. If an error happens in a function call that does not have a callback, the error will be passed down to the first call that has a callback function. 
+For example, if the `fs.mkdir('new')` call in the above code throws an error, because there's no callback attached to that call, the error will be passed down to the callback of `fs.writeFile(...)`. And, of course, `fs.mkdir('new/folder')` and `fs.writeFile(...)` won't be executed because an error occurred before them.
+
+## What's more to it?
+
+If you want to serialize calls to file system, and serialize calls to database, but allow calls to file system and calls to database to happen concurrently, how to achieve this? 
+Sure! You can serialize different functions into different queues. Functions belong to the same queue will be executed in serial, but functions between different queue can run concurrently. 
+To serialize a function to a queue other than the default queue, give a queue name as the second argument of `serialize`:
+```javascript
+conn.query = serialize(conn.query, "db");
+```
+
+## Is any function `serializable`?
+
+Current version of `serialize` can only serialize a function that satisfies the following conditions:
+1. It accepts a callback function, and invokes the callback when it is done;
+2. If the callback function is optional, the second to last argument cannot be a 'Function' type;
+3. If an error occurs, it passed the error as the first argument to the callback, and the error must be an instance of `Error`.
+
+Note: Future version of `serialize` will be able `serialize` a function that emits an `end` or `error` event, instead of using a callback.
