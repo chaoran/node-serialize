@@ -12,14 +12,14 @@ WorkQueue.get = function(name) {
   return queue;
 };
 
-WorkQueue.prototype.add = function(that, func, args) {
+WorkQueue.prototype.add = function(_this, func, args) {
   var that = this;
   var callback = args.pop();
 
   if (typeof callback === 'function') {
     args.push(function() {
       callback.apply(this, arguments);
-      that.next.apply(that, arguments);
+      that.next(arguments[0]);
     });
   } else  {
     args.push(callback);
@@ -27,9 +27,8 @@ WorkQueue.prototype.add = function(that, func, args) {
   }
 
   var task = function(err) { 
-    // directly call 'callback' if an error in an earlier task
     if (err instanceof Error) args[args.length - 1].call(global, err);
-    else func.apply(that, args);
+    else func.apply(_this, args);
   };
 
   if (!this.running) (this.running = task)();
