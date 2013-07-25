@@ -51,8 +51,7 @@ conn.query = serialize(conn.query, "db");
 Current version of `serialize` can only serialize a function that satisfies the following conditions:
 
 1. It accepts a callback function, and invokes the callback when it is done;
-2. If the callback function is optional, the second to last argument cannot be a 'Function' type;
-3. If an error occurs, it passed the error as the first argument to the callback, and the error must be an instance of `Error`.
+2. If an error occurs, it must invoke callback with the error as the first argument; the error must be an instance of `Error`.
 
 Note: Future version of `serialize` may be able to serialize a function that emits `end` and `error` events.
 

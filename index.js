@@ -12,18 +12,17 @@ WorkQueue.get = function(name) {
   return queue;
 };
 
-WorkQueue.prototype.add = function(_this, func, args) {
+WorkQueue.prototype.add = function(_this, func, args, noCallback) {
   var that = this;
-  var callback = args.pop();
 
-  if (typeof callback === 'function') {
+  if (noCallback) {
+    args.push(function(err) { that.next(err) });
+  } else {
+    callback = args.pop();
     args.push(function() {
       callback.apply(this, arguments);
       that.next(arguments[0]);
     });
-  } else  {
-    args.push(callback);
-    args.push(function(err) { that.next(err) });
   }
 
   var task = function(err) { 
@@ -43,9 +42,11 @@ WorkQueue.prototype.next = function(err) {
 var serialize = function(func, name) {
   if (!name) name = 'default';
 
-  var queue = WorkQueue.get(name);
+  var queue = WorkQueue.get(name)
+    , length = func.length;
+
   var serialized = function() {
-    queue.add(this, func, slice.call(arguments));
+    queue.add(this, func, slice.call(arguments), arguments.length < length);
   };
 
   serialized.free = function() { return func; };
